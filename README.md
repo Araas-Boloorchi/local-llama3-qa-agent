@@ -4,7 +4,7 @@
 
 This repository contains a full-stack application featuring a local LLM-powered chatbot with tool calling capabilities, an evaluation system, and a web dashboard for interaction and analysis.
 
-## 📄 Original Problem Statement
+## Original Problem Statement
 
 **Goal:** Build an LLM-powered chatbot that interacts with the user on open-ended questions, and then evaluate it for quality.
 
@@ -15,14 +15,16 @@ This repository contains a full-stack application featuring a local LLM-powered 
 
 ---
 
-## 🎯 Project Overview
+## Project Overview
+
+![QA Agent Demo Video](demo.webp)
 This project implements:
 
 1. **Local LLM Chatbot**: A conversational agent powered by Llama-3 (running locally via `llama-cpp-python`) that can use external tools (web search, calculator).
 2. **Evaluation System**: An LLM-as-judge evaluation framework to measure chatbot quality.
 3. **Web Dashboard**: A React-based interface for chatting and viewing evaluation results.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 /
@@ -35,7 +37,7 @@ This project implements:
 └── run.py            # Helper script to run the system
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -77,7 +79,7 @@ python server.py
 
 The application will be available at **http://localhost:3000**
 
-## 🔧 How It Works
+## System Architecture and Interaction
 
 ### Local LLM Architecture
 
@@ -111,7 +113,7 @@ The evaluation uses an **LLM-as-judge** approach with the local model:
 3. **Judging**: Llama evaluates responses on correctness, completeness, and relevance
 4. **Metrics**: Results are aggregated into accuracy, average score, and tool usage statistics
 
-## 📊 API Endpoints
+## API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -121,7 +123,7 @@ The evaluation uses an **LLM-as-judge** approach with the local model:
 | `/evaluation-results` | GET | Get latest results |
 | `/session/{id}` | DELETE | Clear a conversation |
 
-## 🧪 Running Evaluations
+## Running Evaluations
 
 You can run evaluations directly from the dashboard or via command line:
 
@@ -129,12 +131,12 @@ You can run evaluations directly from the dashboard or via command line:
 python evaluation.py
 ```
 
-## 📝 Design Decisions
+## Technical Design Decisions
 
 1. **Llama-3 as the LLM**: Chosen for its efficiency and instruction-following capabilities, making it suitable for local execution on consumer hardware.
 2. **llama-cpp-python**: Used for running GGUF models efficiently.
 3. **LLM-as-judge**: Reused the same local model for evaluation to keep the system self-contained.
 
-## 📄 License
+## License
 
 MIT License - see LICENSE file for details.
