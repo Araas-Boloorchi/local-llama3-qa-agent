@@ -895,8 +895,8 @@
             const chartData = results?.summary?.category_breakdown
                 ? Object.entries(results.summary.category_breakdown).map(([name, data]) => ({
                     name,
-                    score: data.avg_score,
-                    accuracy: Math.round(data.accuracy * 100)
+                    score: data.avg_score || 0,
+                    accuracy: Math.round((data.accuracy || 0) * 100)
                 }))
                 : [];
 
@@ -1006,7 +1006,7 @@
                                     <div>Score</div>
                                     <div>Status</div>
                                 </div>
-                                {results.results.map((result, idx) => (
+                                {results?.results && results.results.map((result, idx) => (
                                     <div key={idx} className="table-row">
                                         <div className="question-cell">{result.question}</div>
                                         <div>
