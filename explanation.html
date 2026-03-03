@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Agent - Complete Code Explanation</title>
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css"
+        rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --bg-code: #1d1f21;
+            --text-primary: #e6e6e6;
+            --text-secondary: #a0a0a0;
+            --accent: #ff6b35;
+            --accent-light: #ff8c5a;
+            --border: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        nav h2 {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--accent);
+        }
+
+        nav .chapter-link {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1rem;
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 280px;
+            padding: 3rem 4rem;
+            max-width: 1000px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--accent-light);
+            margin: 3rem 0 1.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin: 2rem 0 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .intro {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            margin: 2rem 0;
+        }
+
+        .intro p {
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Code Blocks with Prism */
+        .code-section {
+            margin: 1.5rem 0;
+        }
+
+        .code-header {
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-header::before {
+            content: "📄";
+        }
+
+        pre[class*="language-"] {
+            margin: 0 !important;
+            border-radius: 0 0 6px 6px !important;
+            border: 1px solid var(--border) !important;
+            border-top: none !important;
+            font-size: 0.85rem !important;
+        }
+
+        code[class*="language-"] {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+            font-size: 0.85rem !important;
+        }
+
+        .inline-code {
+            background: #2d2d2d;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            color: #e6db74;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        /* Explanation Box */
+        .explanation {
+            background: rgba(255, 107, 53, 0.05);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            margin: 1rem 0 2rem;
+        }
+
+        .explanation h4 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .explanation ul {
+            margin-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .explanation li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            margin: 1rem 0 1rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            nav {
+                display: none;
+            }
+
+            main {
+                margin-left: 0;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <h2>📚 Table of Contents</h2>
+        <ul>
+            <li><a href="#overview" class="chapter-link">Overview</a></li>
+            <li><a href="#chapter1" class="chapter-link">Chapter 1: Setup</a></li>
+            <li><a href="#setup-local">setup_local.py</a></li>
+            <li><a href="#chapter2" class="chapter-link">Chapter 2: Agent</a></li>
+            <li><a href="#agent-imports">Imports & Model Loading</a></li>
+            <li><a href="#agent-tools">Tool Definitions</a></li>
+            <li><a href="#agent-execute">Tool Execution</a></li>
+            <li><a href="#agent-chat">Chat Function</a></li>
+            <li><a href="#chapter3" class="chapter-link">Chapter 3: Server</a></li>
+            <li><a href="#server-setup">FastAPI Setup</a></li>
+            <li><a href="#server-models">Pydantic Models</a></li>
+            <li><a href="#server-endpoints">API Endpoints</a></li>
+            <li><a href="#chapter4" class="chapter-link">Chapter 4: Evaluation</a></li>
+            <li><a href="#eval-dataset">Dataset</a></li>
+            <li><a href="#eval-judge">Judge Function</a></li>
+            <li><a href="#eval-run">Run Evaluation</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1>QA Agent - Complete Code Explanation</h1>
+
+        <div class="intro">
+            <p>This document explains every line of code in the QA Agent project. The project is a local LLM-powered
+                chatbot with tool calling, an evaluation system, and a web dashboard. All code runs entirely on your
+                computer using the Llama-3 model.</p>
+        </div>
+
+        <!-- ============================================================ -->
+        <h2 id="overview">Overview</h2>
+        <!-- ============================================================ -->
+
+        <p>The project consists of 4 main Python files:</p>
+        <ul>
+            <li><strong>setup_local.py</strong> - Downloads the Llama-3 model from Hugging Face</li>
+            <li><strong>agent.py</strong> - Core chatbot logic with tool calling</li>
+            <li><strong>server.py</strong> - FastAPI REST API server</li>
+            <li><strong>evaluation.py</strong> - LLM-as-judge evaluation system</li>
+        </ul>
+
+        <p>The architecture flow is:</p>
+        <ol>
+            <li>User sends a message via the web dashboard</li>
+            <li>Dashboard calls the <code class="inline-code">/chat</code> API endpoint</li>
+            <li>Server passes the message to the agent</li>
+            <li>Agent uses Llama-3 to generate a response (possibly calling tools)</li>
+            <li>Response is returned to the dashboard</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <h2 id="chapter1">Chapter 1: Model Setup (setup_local.py)</h2>
+        <!-- ============================================================ -->
+
+        <p>This file downloads the Llama-3 model from Hugging Face Hub. We use a quantized (compressed) version of the
+            model called <code class="inline-code">Q4_K_M</code> which is about 2GB and runs efficiently on CPU.</p>
+
+        <div class="code-section">
+            <div class="code-header">setup_local.py - Complete File</div>
+            <pre><code>import os
+from huggingface_hub import hf_hub_download
+
+def download_model():
+    model_name = "bartowski/Llama-3.2-3B-Instruct-GGUF"
+    filename = "Llama-3.2-3B-Instruct-Q4_K_M.gguf"
+    
+    print(f"Downloading {filename} from {model_name}...")
+    
+    # Create models directory if it doesn't exist
+    if not os.path.exists("models"):
+        os.makedirs("models")
+        
+    try:
+        model_path = hf_hub_download(
+            repo_id=model_name,
+            filename=filename,
+            local_dir="models",
+            local_dir_use_symlinks=False
+        )
+        print(f"Successfully downloaded model to: {model_path}")
+        return model_path
+    except Exception as e:
+        print(f"Error downloading model: {e}")
+        return None
+
+if __name__ == "__main__":
+    download_model()</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Line-by-Line Explanation</h4>
+            <ul>
+                <li><strong>Line 1-2:</strong> Import <code class="inline-code">os</code> for file operations and <code
+                        class="inline-code">hf_hub_download</code> from the Hugging Face Hub library to download models.
+                </li>
+                <li><strong>Line 4-6:</strong> Define the function and specify which model to download. We use <code
+                        class="inline-code">bartowski/Llama-3.2-3B-Instruct-GGUF</code> which is a community-quantized
+                    version of Meta's Llama-3.</li>
+                <li><strong>Line 10-12:</strong> Create a <code class="inline-code">models/</code> directory if it
+                    doesn't exist. This is where the model file will be stored.</li>
+                <li><strong>Line 14-20:</strong> Use <code class="inline-code">hf_hub_download()</code> to download the
+                    model. The function handles caching automatically.</li>
+                <li><strong>Line 27-28:</strong> Standard Python idiom to run the function when the script is executed
+                    directly.</li>
+            </ul>
+        </div>
+
+        <!-- ============================================================ -->
+        <h2 id="chapter2">Chapter 2: The Agent (agent.py)</h2>
+        <!-- ============================================================ -->
+
+        <p>This is the brain of the chatbot. It loads the local Llama-3 model and implements the core chat logic with
+            tool calling.</p>
+
+        <h3 id="agent-imports">2.1 Imports and Model Loading</h3>
+
+        <div class="code-section">
+            <div class="code-header">agent.py - Imports and Initialization</div>
+            <pre><code>"""
+Question-Answering Agent with Tool Calling (Local LLM Version)
+
+This module implements the core chatbot logic using a local Llama-3 model.
+"""
+
+import json
+import re
+import math
+import os
+import sys
+from typing import Any, List, Dict
+
+# Import llama-cpp-python
+try:
+    from llama_cpp import Llama
+except ImportError:
+    print("Error: llama-cpp-python is not installed. Please run: pip install llama-cpp-python")
+    sys.exit(1)
+
+# Initialize the Local LLM
+# We look for the model in the 'models' directory
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "Llama-3.2-3B-Instruct-Q4_K_M.gguf")
+
+if not os.path.exists(MODEL_PATH):
+    print(f"Warning: Model not found at {MODEL_PATH}")
+    print("Please run 'python setup_local.py' to download the model.")
+    llm = None
+else:
+    print(f"Loading local model from {MODEL_PATH}...")
+    # n_ctx=4096 is the context window size
+    # n_gpu_layers=-1 attempts to offload all layers to GPU if available
+    llm = Llama(
+        model_path=MODEL_PATH,
+        n_ctx=4096,
+        n_gpu_layers=-1, 
+        verbose=False
+    )
+    print("Model loaded successfully!")</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Line-by-Line Explanation</h4>
+            <ul>
+                <li><strong>Lines 7-12:</strong> Import standard libraries. <code class="inline-code">json</code> for
+                    parsing, <code class="inline-code">re</code> for regex, <code class="inline-code">math</code> for
+                    the calculator tool.</li>
+                <li><strong>Lines 14-19:</strong> Try to import <code class="inline-code">llama_cpp</code>. If not
+                    installed, exit with an error message. This library runs GGUF models locally.</li>
+                <li><strong>Line 23:</strong> Construct the path to the model file. <code
+                        class="inline-code">os.path.dirname(__file__)</code> gets the directory where this script is
+                    located.</li>
+                <li><strong>Lines 25-28:</strong> Check if the model file exists. If not, set <code
+                        class="inline-code">llm = None</code> so we can handle this gracefully.</li>
+                <li><strong>Lines 29-38:</strong> Load the Llama model with these parameters:
+                    <ul>
+                        <li><code class="inline-code">n_ctx=4096</code>: Maximum context window (how much text the model
+                            can "see")</li>
+                        <li><code class="inline-code">n_gpu_layers=-1</code>: Attempt to use GPU if available (falls
+                            back to CPU)</li>
+                        <li><code class="inline-code">verbose=False</code>: Suppress debug output</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <h3 id="agent-tools">2.2 Tool Definitions</h3>
+
+        <div class="code-section">
+            <div class="code-header">agent.py - Tool Definitions</div>
+            <pre><code># Define our tools
+TOOLS = [
+    {
+        "name": "web_search",
+        "description": "Search the web for current information.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The search query"
+                }
+            },
+            "required": ["query"]
+        }
+    },
+    {
+        "name": "calculator",
+        "description": "Perform mathematical calculations.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "expression": {
+                    "type": "string",
+                    "description": "The mathematical expression"
+                }
+            },
+            "required": ["expression"]
+        }
+    }
+]</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Why This Structure?</h4>
+            <ul>
+                <li>This uses the <strong>OpenAI tool calling format</strong> which is widely adopted. Each tool has a
+                    name, description, and parameter schema.</li>
+                <li>The <code class="inline-code">parameters</code> object follows JSON Schema format, allowing the
+                    model to understand what inputs are expected.</li>
+                <li>We define 2 tools: <code class="inline-code">web_search</code> for real-time information and <code
+                        class="inline-code">calculator</code> for math.</li>
+            </ul>
+        </div>
+
+        <h3 id="agent-execute">2.3 Tool Execution Functions</h3>
+
+        <div class="code-section">
+            <div class="code-header">agent.py - Web Search Function</div>
+            <pre><code>def execute_web_search(query: str) -> str:
+    """Simulates a web search."""
+    # Mock search results
+    mock_results = {
+        "weather": "Current weather: Sunny, 72°F (22°C). Humidity 45%.",
+        "stock": "Stock Update: TSLA $210.50 (+1.2%), AAPL $185.00 (-0.5%).",
+        "news": "Latest News: AI advancements continue to accelerate. New local models released.",
+        "default": f"Search results for '{query}': Found multiple relevant pages about {query}."
+    }
+    
+    query_lower = query.lower()
+    if "weather" in query_lower:
+        return mock_results["weather"]
+    elif "stock" in query_lower or "price" in query_lower:
+        return mock_results["stock"]
+    elif "news" in query_lower:
+        return mock_results["news"]
+    else:
+        return mock_results["default"]</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Why Mock Results?</h4>
+            <ul>
+                <li>This is a <strong>demonstration implementation</strong>. In production, you would replace this with
+                    a real API call (e.g., Google Search API, Tavily, etc.).</li>
+                <li>The mock returns realistic-looking data based on keywords in the query.</li>
+                <li>This approach lets you test the tool-calling flow without needing API keys.</li>
+            </ul>
+        </div>
+
+        <div class="code-section">
+            <div class="code-header">agent.py - Calculator Function</div>
+            <pre><code>def execute_calculator(expression: str) -> str:
+    """Safely evaluates mathematical expressions."""
+    try:
+        expr = expression.strip()
+        # Handle "X% of Y"
+        percent_match = re.match(r'(\d+(?:\.\d+)?)\s*%\s*of\s*(\d+(?:\.\d+)?)', expr, re.IGNORECASE)
+        if percent_match:
+            percent = float(percent_match.group(1))
+            value = float(percent_match.group(2))
+            return f"{percent}% of {value} = {(percent/100)*value}"
+        
+        expr = expr.replace('^', '**').replace('×', '*').replace('÷', '/')
+        safe_dict = {
+            'sqrt': math.sqrt, 'sin': math.sin, 'cos': math.cos, 'tan': math.tan,
+            'log': math.log10, 'ln': math.log, 'exp': math.exp, 'abs': abs,
+            'pow': pow, 'pi': math.pi, 'e': math.e
+        }
+        result = eval(expr, {"__builtins__": {}}, safe_dict)
+        return f"{expression} = {result}"
+    except Exception as e:
+        return f"Error calculating '{expression}': {str(e)}"</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Security Note on eval()</h4>
+            <ul>
+                <li><strong>Line 6-10:</strong> Special handling for "25% of 100" style expressions using regex.</li>
+                <li><strong>Line 12:</strong> Convert common math symbols (^, ×, ÷) to Python equivalents (**, *, /).
+                </li>
+                <li><strong>Lines 13-17:</strong> Create a "safe" dictionary of allowed functions. This prevents
+                    arbitrary code execution.</li>
+                <li><strong>Line 18:</strong> <code class="inline-code">eval()</code> is used with <code
+                        class="inline-code">{"__builtins__": {}}</code> to disable all built-in Python functions, making
+                    it safe.</li>
+            </ul>
+        </div>
+
+        <div class="code-section">
+            <div class="code-header">agent.py - Tool Dispatcher</div>
+            <pre><code>def execute_tool(tool_name: str, tool_input: dict) -> str:
+    if tool_name == "web_search":
+        return execute_web_search(tool_input.get("query", ""))
+    elif tool_name == "calculator":
+        return execute_calculator(tool_input.get("expression", ""))
+    else:
+        return f"Unknown tool: {tool_name}"</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Dispatcher Pattern</h4>
+            <ul>
+                <li>This function routes tool calls to the appropriate handler.</li>
+                <li>Using <code class="inline-code">.get("key", "")</code> provides a default empty string if the key is
+                    missing.</li>
+                <li>Returns an error message for unknown tools instead of crashing.</li>
+            </ul>
+        </div>
+
+        <h3 id="agent-chat">2.4 The Chat Function (Core Logic)</h3>
+
+        <div class="code-section">
+            <div class="code-header">agent.py - Chat Function</div>
+            <pre><code>def chat(user_message: str, conversation_history: list = None) -> dict:
+    if conversation_history is None:
+        conversation_history = []
+    
+    # Check if model is loaded
+    if llm is None:
+        return {
+            "response": "Error: Local model not loaded. Please check server logs.",
+            "tool_calls": [],
+            "conversation_history": conversation_history
+        }
+
+    # Add user message
+    conversation_history.append({"role": "user", "content": user_message})
+    
+    # System prompt to guide the model to use tools via JSON
+    system_prompt = """You are a QA Agent with access to tools.
+You MUST use the 'web_search' tool for ANY question about current events, weather, stock prices, or real-time information.
+You MUST use the 'calculator' tool for ANY math problem.
+
+Tools available:
+1. web_search: Input: {"query": "string"}
+2. calculator: Input: {"expression": "string"}
+
+IMPORTANT: To use a tool, you must output ONLY a valid JSON object. Do not add any other text.
+Format:
+{
+  "tool": "tool_name",
+  "input": { ... }
+}
+
+Example:
+User: What is the weather in London?
+Assistant: { "tool": "web_search", "input": { "query": "weather in London" } }
+
+If no tool is needed, just answer normally.
+"""
+    
+    # Prepare messages for Llama
+    messages = [{"role": "system", "content": system_prompt}] + conversation_history
+    
+    # 1. Ask Model
+    response = llm.create_chat_completion(
+        messages=messages,
+        temperature=0.2,
+        max_tokens=1024
+    )</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Key Design Decisions</h4>
+            <ul>
+                <li><strong>Line 2-3:</strong> Use <code class="inline-code">None</code> as default instead of <code
+                        class="inline-code">[]</code> to avoid Python's mutable default argument bug.</li>
+                <li><strong>Lines 17-35:</strong> The system prompt is critical. It tells the model:
+                    <ul>
+                        <li>What tools are available</li>
+                        <li>WHEN to use each tool (weather = web_search, math = calculator)</li>
+                        <li>The exact JSON format for tool calls</li>
+                        <li>A concrete example to follow</li>
+                    </ul>
+                </li>
+                <li><strong>Line 44:</strong> <code class="inline-code">temperature=0.2</code> makes the model more
+                    deterministic (less random).</li>
+            </ul>
+        </div>
+
+        <div class="code-section">
+            <div class="code-header">agent.py - Tool Call Detection</div>
+            <pre><code>    content = response["choices"][0]["message"]["content"]
+    tool_calls_made = []
+    
+    # 2. Check for tool usage (JSON pattern)
+    tool_json = None
+    try:
+        # Look for a JSON block or just try parsing the whole content
+        # Clean specific markdown code blocks if present
+        clean_content = content.strip()
+        if "```json" in clean_content:
+            clean_content = clean_content.split("```json")[1].split("```")[0].strip()
+        elif "```" in clean_content:
+            clean_content = clean_content.split("```")[1].split("```")[0].strip()
+            
+        if clean_content.startswith("{") and "tool" in clean_content:
+            tool_json = json.loads(clean_content)
+    except Exception:
+        pass # Not a valid JSON tool call</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Parsing Strategy</h4>
+            <ul>
+                <li><strong>Lines 10-13:</strong> Models often wrap JSON in markdown code blocks like <code
+                        class="inline-code">```json ... ```</code>. We strip these.</li>
+                <li><strong>Line 15:</strong> Only try to parse as JSON if it starts with <code
+                        class="inline-code">{</code> and contains "tool".</li>
+                <li><strong>Line 17-18:</strong> If parsing fails, we assume it's a normal text response.</li>
+            </ul>
+        </div>
+
+        <div class="code-section">
+            <div class="code-header">agent.py - Execute Tool and Get Final Response</div>
+            <pre><code>    # 3. Handle Tool Call
+    if tool_json and "tool" in tool_json:
+        tool_name = tool_json["tool"]
+        tool_input = tool_json.get("input", {})
+        
+        # Record the tool call
+        tool_calls_made.append({
+            "tool": tool_name,
+            "input": tool_input,
+            "output": None # Will fill later
+        })
+        
+        # Execute
+        result = execute_tool(tool_name, tool_input)
+        tool_calls_made[-1]["output"] = result
+        
+        # Add assistant's *intent* to use tool to history
+        conversation_history.append({"role": "assistant", "content": json.dumps(tool_json)})
+        
+        # Add tool result to history
+        conversation_history.append({
+            "role": "function",
+            "content": f"Tool Output for {tool_name}: {result}" 
+        })
+        
+        # Ask Model again with result
+        messages = [{"role": "system", "content": system_prompt}] + conversation_history
+        response_2 = llm.create_chat_completion(
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1024
+        )
+        final_response = response_2["choices"][0]["message"]["content"]
+        
+        conversation_history.append({"role": "assistant", "content": final_response})
+        
+    else:
+        # No tool used
+        final_response = content
+        conversation_history.append({"role": "assistant", "content": final_response})
+    
+    return {
+        "response": final_response,
+        "tool_calls": tool_calls_made,
+        "conversation_history": conversation_history
+    }</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 The Tool-Calling Loop</h4>
+            <ul>
+                <li><strong>Lines 7-11:</strong> Record the tool call for transparency (shown in the UI).</li>
+                <li><strong>Line 14:</strong> Execute the actual tool function.</li>
+                <li><strong>Lines 17-24:</strong> Add both the tool call intent AND the tool result to conversation
+                    history. This gives the model context.</li>
+                <li><strong>Lines 27-33:</strong> Call the model AGAIN with the tool result. <code
+                        class="inline-code">temperature=0.7</code> is higher here for more natural responses.</li>
+                <li><strong>Lines 42-46:</strong> Return a clean dictionary with the response, tool calls, and updated
+                    history.</li>
+            </ul>
+        </div>
+
+        <!-- ============================================================ -->
+        <h2 id="chapter3">Chapter 3: The Server (server.py)</h2>
+        <!-- ============================================================ -->
+
+        <p>This file creates a REST API using FastAPI. It serves both the web frontend and the API endpoints.</p>
+
+        <h3 id="server-setup">3.1 FastAPI Setup</h3>
+
+        <div class="code-section">
+            <div class="code-header">server.py - Imports and App Creation</div>
+            <pre><code>"""
+FastAPI Server for the Question-Answering Agent
+
+This server provides REST API endpoints for:
+1. /chat - Send messages and get responses from the chatbot
+2. /evaluate - Run the evaluation suite and get results
+3. /evaluation-results - Get the latest evaluation results
+
+HOW IT WORKS:
+- FastAPI is a modern Python web framework for building APIs
+- It uses async/await for handling concurrent requests
+- Pydantic models define the request/response schemas
+- CORS middleware allows the frontend to communicate with this backend
+"""
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+from typing import Optional
+import json
+import os
+
+# Import our agent and evaluation modules
+from agent import chat
+from evaluation import run_evaluation, get_evaluation_results
+
+# Create the FastAPI application
+app = FastAPI(
+    title="QA Agent API",
+    description="API for the Question-Answering Agent with tool calling",
+    version="1.0.0"
+)
+
+# Configure CORS (Cross-Origin Resource Sharing)
+# This is necessary for the frontend (running on a different port) to call our API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify exact origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Key Concepts</h4>
+            <ul>
+                <li><strong>FastAPI:</strong> A modern Python framework that automatically generates API documentation
+                    and validates data.</li>
+                <li><strong>CORS:</strong> Web security feature. Without this middleware, browsers would block requests
+                    from the frontend to the backend.</li>
+                <li><strong>Lines 26-27:</strong> Import our custom modules. Python will execute <code
+                        class="inline-code">agent.py</code> which loads the model.</li>
+            </ul>
+        </div>
+
+        <h3 id="server-models">3.2 Pydantic Models</h3>
+
+        <div class="code-section">
+            <div class="code-header">server.py - Request/Response Models</div>
+            <pre><code>class ChatRequest(BaseModel):
+    """
+    Request body for the /chat endpoint.
+    
+    - message: The user's question or input
+    - session_id: Optional ID to maintain conversation context
+    """
+    message: str
+    session_id: Optional[str] = None
+
+
+class ChatResponse(BaseModel):
+    """
+    Response from the /chat endpoint.
+    
+    - response: The chatbot's answer
+    - tool_calls: List of tools that were used (for transparency)
+    - session_id: The session ID for this conversation
+    """
+    response: str
+    tool_calls: list
+    session_id: str
+
+
+class EvaluationResponse(BaseModel):
+    """
+    Response from the /evaluate endpoint.
+    
+    - results: List of individual test results
+    - summary: Aggregate metrics (accuracy, avg score, etc.)
+    """
+    results: list
+    summary: dict
+
+
+# In-memory session storage
+sessions = {}</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Why Pydantic?</h4>
+            <ul>
+                <li>Pydantic models provide <strong>automatic validation</strong>. If someone sends a request without a
+                    "message" field, FastAPI returns a helpful error.</li>
+                <li><code class="inline-code">Optional[str] = None</code> means the field is optional with a default of
+                    <code class="inline-code">None</code>.
+                </li>
+                <li><strong>sessions dict:</strong> Stores conversation history in memory. In production, use Redis or a
+                    database.</li>
+            </ul>
+        </div>
+
+        <h3 id="server-endpoints">3.3 API Endpoints</h3>
+
+        <div class="code-section">
+            <div class="code-header">server.py - Chat Endpoint</div>
+            <pre><code>@app.get("/")
+async def root():
+    """Serve the frontend HTML file."""
+    return FileResponse(os.path.join(os.path.dirname(__file__), "index.html"))
+
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat_endpoint(request: ChatRequest):
+    """
+    Main chat endpoint - send a message, get a response.
+    """
+    try:
+        # Generate or use existing session ID
+        session_id = request.session_id or f"session_{len(sessions)}"
+        
+        # Get existing conversation history or start fresh
+        conversation_history = sessions.get(session_id, [])
+        
+        # Call the agent
+        result = chat(request.message, conversation_history)
+        
+        # Store updated conversation history
+        sessions[session_id] = result["conversation_history"]
+        
+        return ChatResponse(
+            response=result["response"],
+            tool_calls=result["tool_calls"],
+            session_id=session_id
+        )
+    
+    except Exception as e:
+        print(f"Error in chat endpoint: {e}")
+        raise HTTPException(status_code=500, detail=str(e))</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 How Sessions Work</h4>
+            <ul>
+                <li><strong>Line 2-4:</strong> The root URL (<code class="inline-code">/</code>) serves the HTML
+                    frontend directly.</li>
+                <li><strong>Line 14:</strong> If no session_id is provided, generate one like "session_0", "session_1",
+                    etc.</li>
+                <li><strong>Line 17:</strong> Retrieve existing conversation history or start with empty list.</li>
+                <li><strong>Line 23:</strong> Save the updated history back to the session store.</li>
+                <li>This allows multi-turn conversations ("What's the capital of France?" → "Paris" → "What's its
+                    population?").</li>
+            </ul>
+        </div>
+
+        <div class="code-section">
+            <div class="code-header">server.py - Evaluation Endpoints</div>
+            <pre><code>@app.post("/evaluate", response_model=EvaluationResponse)
+async def evaluate_endpoint():
+    """Run the evaluation suite."""
+    try:
+        results = run_evaluation()
+        return EvaluationResponse(
+            results=results["individual_results"],
+            summary=results["summary"]
+        )
+    except Exception as e:
+        print(f"Error in evaluate endpoint: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/evaluation-results")
+async def get_evaluation_results_endpoint():
+    """Get the most recent evaluation results."""
+    try:
+        results = get_evaluation_results()
+        if results:
+            return results
+        else:
+            return {"message": "No evaluation results found. Run /evaluate first."}
+    except Exception as e:
+        print(f"Error getting evaluation results: {e}")
+        raise HTTPException(status_code=500, detail=str(e))</code></pre>
+        </div>
+
+        <div class="code-section">
+            <div class="code-header">server.py - Run Server</div>
+            <pre><code>if __name__ == "__main__":
+    import uvicorn
+    
+    # Run on port 3000 to serve both API and frontend
+    print("Starting server at http://localhost:3000")
+    uvicorn.run(app, host="0.0.0.0", port=3000)</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Server Configuration</h4>
+            <ul>
+                <li><strong>Uvicorn:</strong> An ASGI server that runs FastAPI applications efficiently.</li>
+                <li><strong>host="0.0.0.0":</strong> Listen on all network interfaces (not just localhost).</li>
+                <li><strong>port=3000:</strong> The application is accessible at http://localhost:3000</li>
+            </ul>
+        </div>
+
+        <!-- ============================================================ -->
+        <h2 id="chapter4">Chapter 4: Evaluation (evaluation.py)</h2>
+        <!-- ============================================================ -->
+
+        <p>This file implements an "LLM-as-judge" evaluation system. The same Llama model is used to grade its own
+            responses.</p>
+
+        <h3 id="eval-dataset">4.1 Evaluation Dataset</h3>
+
+        <div class="code-section">
+            <div class="code-header">evaluation.py - Dataset</div>
+            <pre><code>EVALUATION_DATASET = [
+    {
+        "id": "math_1",
+        "question": "What is 25% of 840?",
+        "expected_answer": "210",
+        "category": "calculation",
+        "requires_tool": "calculator"
+    },
+    {
+        "id": "math_2", 
+        "question": "Calculate the square root of 144",
+        "expected_answer": "12",
+        "category": "calculation",
+        "requires_tool": "calculator"
+    },
+    {
+        "id": "factual_1",
+        "question": "What is the chemical symbol for gold?",
+        "expected_answer": "Au",
+        "category": "factual",
+        "requires_tool": None
+    },
+    {
+        "id": "search_1",
+        "question": "What's the current weather like?",
+        "expected_answer": "Should attempt to search for weather information",
+        "category": "search",
+        "requires_tool": "web_search"
+    },
+    # ... more test cases
+]</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Dataset Design</h4>
+            <ul>
+                <li>Each test case has an <code class="inline-code">id</code>, <code
+                        class="inline-code">question</code>, <code class="inline-code">expected_answer</code>, <code
+                        class="inline-code">category</code>, and <code class="inline-code">requires_tool</code>.</li>
+                <li>Categories: <strong>calculation</strong>, <strong>factual</strong>, <strong>search</strong>,
+                    <strong>reasoning</strong>.
+                </li>
+                <li><code class="inline-code">requires_tool</code> specifies which tool SHOULD be used. <code
+                        class="inline-code">None</code> means no tool needed.</li>
+            </ul>
+        </div>
+
+        <h3 id="eval-judge">4.2 Judge Function</h3>
+
+        <div class="code-section">
+            <div class="code-header">evaluation.py - LLM Judge</div>
+            <pre><code>def judge_response(question: str, expected: str, actual: str, tool_calls: list) -> dict:
+    """Use local LLM to judge the quality of a response."""
+    if llm is None:
+        return {
+            "correctness": 0, "completeness": 0, "relevance": 0, "overall_score": 0, 
+            "explanation": "Judge model not loaded"
+        }
+
+    judge_prompt = f"""You are evaluating a chatbot's response to a question.
+
+Question: {question}
+Expected Answer: {expected}
+Actual Response: {actual}
+Tools Used: {json.dumps(tool_calls) if tool_calls else "None"}
+
+Evaluate the response on these criteria:
+1. Correctness (1-5): Is the information accurate?
+2. Completeness (1-5): Does it fully answer the question?
+3. Relevance (1-5): Is the response relevant?
+
+Provide your evaluation in this exact JSON format:
+{{
+    "correctness": <score>,
+    "completeness": <score>,
+    "relevance": <score>,
+    "overall_score": <average of the three>,
+    "explanation": "<brief explanation of your scoring>"
+}}
+
+Only output the JSON, nothing else."""
+
+    try:
+        messages = [
+            {"role": "system", "content": "You are a fair and critical judge."},
+            {"role": "user", "content": judge_prompt}
+        ]
+        
+        response = llm.create_chat_completion(
+            messages=messages,
+            temperature=0.1, # Low temperature for consistent scoring
+            max_tokens=500
+        )
+        
+        judge_text = response["choices"][0]["message"]["content"]
+        
+        # Extract JSON
+        if "```json" in judge_text:
+            judge_text = judge_text.split("```json")[1].split("```")[0]
+        elif "```" in judge_text:
+            judge_text = judge_text.split("```")[1].split("```")[0]
+            
+        evaluation = json.loads(judge_text.strip())
+        return evaluation
+    
+    except Exception as e:
+        print(f"Error judging response: {e}")
+        return {
+            "correctness": 3,
+            "completeness": 3,
+            "relevance": 3,
+            "overall_score": 3,
+            "explanation": f"Error during evaluation: {str(e)}"
+        }</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 LLM-as-Judge Approach</h4>
+            <ul>
+                <li>This is a popular technique for evaluating LLM outputs without human annotators.</li>
+                <li>The judge model sees: the question, expected answer, actual response, and tools used.</li>
+                <li><strong>temperature=0.1:</strong> Very low randomness for consistent, reproducible scores.</li>
+                <li>Scores are on a 1-5 scale for Correctness, Completeness, and Relevance.</li>
+            </ul>
+        </div>
+
+        <h3 id="eval-run">4.3 Run Evaluation</h3>
+
+        <div class="code-section">
+            <div class="code-header">evaluation.py - Main Evaluation Loop</div>
+            <pre><code>def run_evaluation() -> dict:
+    """Run the full evaluation suite."""
+    results = []
+    print("Starting evaluation...")
+    print(f"Running {len(EVALUATION_DATASET)} test cases\n")
+    
+    for i, test_case in enumerate(EVALUATION_DATASET):
+        print(f"[{i+1}/{len(EVALUATION_DATASET)}] Testing: {test_case['question'][:50]}...")
+        
+        try:
+            # Run the question through the chatbot
+            chat_result = chat(test_case["question"], conversation_history=None)
+            
+            # Have the LLM judge the response
+            evaluation = judge_response(
+                question=test_case["question"],
+                expected=test_case["expected_answer"],
+                actual=chat_result["response"],
+                tool_calls=chat_result["tool_calls"]
+            )
+            
+            # Check if correct tool was used
+            tools_used = [tc["tool"] for tc in chat_result["tool_calls"]]
+            expected_tool = test_case.get("requires_tool")
+            correct_tool_used = (expected_tool is None or expected_tool in tools_used)
+            
+            result = {
+                "id": test_case["id"],
+                "question": test_case["question"],
+                "expected_answer": test_case["expected_answer"],
+                "actual_response": chat_result["response"],
+                "category": test_case["category"],
+                "tools_used": tools_used,
+                "expected_tool": expected_tool,
+                "correct_tool_used": correct_tool_used,
+                "scores": evaluation,
+                "passed": evaluation["overall_score"] >= 3.5
+            }
+            
+            results.append(result)
+            print(f"   Score: {evaluation['overall_score']}/5 - {'PASS' if result['passed'] else 'FAIL'}")
+            
+        except Exception as e:
+            print(f"   ERROR: {e}")
+            results.append({
+                "id": test_case["id"],
+                "question": test_case["question"],
+                "error": str(e),
+                "passed": False
+            })</code></pre>
+        </div>
+
+        <div class="explanation">
+            <h4>🔍 Evaluation Flow</h4>
+            <ul>
+                <li><strong>Line 12:</strong> Run each question through the chatbot (fresh conversation each time).</li>
+                <li><strong>Lines 15-20:</strong> Have the LLM judge the response quality.</li>
+                <li><strong>Lines 23-25:</strong> Check if the expected tool was used (e.g., calculator for math
+                    questions).</li>
+                <li><strong>Line 37:</strong> Pass threshold is 3.5/5 (70%).</li>
+            </ul>
+        </div>
+
+        <h2>Conclusion</h2>
+
+        <p>This project demonstrates how to build a complete LLM-powered application:</p>
+
+        <ol>
+            <li><strong>Local Model</strong>: Using llama-cpp-python to run Llama-3 on your machine</li>
+            <li><strong>Tool Calling</strong>: Extending LLM capabilities with external functions</li>
+            <li><strong>REST API</strong>: FastAPI for serving both frontend and API</li>
+            <li><strong>Evaluation</strong>: LLM-as-judge for automated quality assessment</li>
+        </ol>
+
+        <p style="margin-top: 2rem; color: var(--accent);">Built for the Question-Answering Agent Interview Challenge.
+        </p>
+    </main>
+
+    <!-- Prism.js Scripts for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script>
+        // Add language class to all code blocks for Prism
+        document.querySelectorAll('pre code').forEach((block) => {
+            if (!block.className.includes('language-')) {
+                block.className = 'language-python';
+            }
+            block.parentElement.className = 'line-numbers ' + (block.parentElement.className || '');
+        });
+        Prism.highlightAll();
+    </script>
+</body>
+
+</html>
